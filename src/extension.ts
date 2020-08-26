@@ -63,6 +63,7 @@ export async function update(context: vscode.ExtensionContext) {
 
 	let finalDependencies: PackageData[] = [];
 
+	// add dependencies that were already cached
 	for (let dependency of cachedDependencies) {
 		const foundDependency = freshDependencies.find(
 			(pkg) =>
@@ -77,6 +78,7 @@ export async function update(context: vscode.ExtensionContext) {
 		}
 	}
 
+	// Add new dependencies, if any
 	for (let dependency of freshDependencies) {
 		if (
 			!finalDependencies.some(
@@ -92,45 +94,7 @@ export async function update(context: vscode.ExtensionContext) {
 		}
 	}
 
-	// find new dependencies
-
-	const getNewDependencies = (
-		then: PackageData[],
-		now: Dependency[]
-	): Dependency[] => {
-		const newPkg: Dependency[] = [];
-		now.forEach((nowPkg) => {
-			if (
-				!then.some(
-					(thenPkg) =>
-						nowPkg.name === thenPkg.name &&
-						nowPkg.version === thenPkg.version
-				)
-			) {
-				newPkg.push(nowPkg);
-			}
-		});
-		return newPkg;
-	};
-
-	const newDependencies: Dependency[] = getNewDependencies(
-		cachedDependencies,
-		freshDependencies
-	);
-
-	console.log("New dependencies = ");
-	console.log(newDependencies);
-
-	const newDependenciesAsPackages: PackageData[] = [];
-
-	for (let dependency of newDependencies) {
-		newDependenciesAsPackages.push({
-			...dependency,
-			size: await getPackageSize(dependency.name, dependency.version)
-		});
-	}
-
-	// append to workspaceState
+	// update workspaceState
 	context.workspaceState.update("dependencies", finalDependencies);
 	context.workspaceState.update(
 		"dependenciesSize",
@@ -161,9 +125,11 @@ export function updateStatusBar(context: vscode.ExtensionContext) {
 		statusBar.show();
 	}
 	statusBar.show();
-	statusBar.text = `${prettyBytes(
+	const bytes = prettyBytes(
 		context.workspaceState.get("dependenciesSize") || 0
-	)}`;
+	);
+	statusBar.text = `$(package) ${bytes}`;
+	statusBar.tooltip = `Unpacked size: ${bytes}`;
 }
 
 export function deactivate(context: vscode.ExtensionContext) {
