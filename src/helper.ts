@@ -1,5 +1,5 @@
-import { workspace, Uri } from "vscode";
 import axios from "axios";
+import { Uri, workspace } from "vscode";
 
 export async function packageJsonExists(): Promise<boolean> {
 	if (workspace.rootPath) {
@@ -12,7 +12,7 @@ export async function packageJsonExists(): Promise<boolean> {
 	return false;
 }
 
-export async function readFile(path: string) {
+export async function readFile(path: string): Promise<Uint8Array | undefined> {
 	let contents;
 	try {
 		contents = await workspace.fs.readFile(Uri.file(path));
@@ -23,7 +23,7 @@ export async function readFile(path: string) {
 	return contents;
 }
 
-export async function getPackageJson() {
+export async function getPackageJson(): Promise<any> {
 	if (packageJsonExists()) {
 		const contents = await readFile(`${workspace.rootPath}/package.json`);
 
@@ -40,7 +40,7 @@ export async function getPackageJson() {
 	}
 }
 
-export async function getObjectAsArray(name: string) {
+export async function getObjectAsArray(name: string): Promise<any[][]> {
 	const packageJson = await getPackageJson();
 	if (packageJson) {
 		if (Object.keys(packageJson).includes(name)) {
@@ -49,54 +49,6 @@ export async function getObjectAsArray(name: string) {
 		}
 	}
 	return [];
-}
-
-export async function getDependencies() {
-	const packages = await getObjectAsArray("dependencies");
-
-	let packageObjects: PackageData[] = [];
-	for (let i = 0; i < packages.length; i++) {
-		packageObjects.push({
-			name: packages[i][0],
-			version: packages[i][1].replace("^", ""),
-			size: await getPackageSize(packages[i][0], packages[i][1])
-		});
-	}
-
-	if (packageObjects === undefined) {
-		return [
-			{
-				name: "",
-				version: "",
-				size: undefined
-			}
-		];
-	}
-
-	return packageObjects;
-}
-
-export async function getDependenciesWithoutSize() {
-	const packages = await getObjectAsArray("dependencies");
-
-	let packageObjects: Dependency[] = [];
-	for (let i = 0; i < packages.length; i++) {
-		packageObjects.push({
-			name: packages[i][0],
-			version: packages[i][1].replace("^", "")
-		});
-	}
-
-	if (packageObjects === undefined) {
-		return [
-			{
-				name: "",
-				version: ""
-			}
-		];
-	}
-
-	return packageObjects;
 }
 
 export async function getPackageSize(
@@ -114,4 +66,52 @@ export async function getPackageSize(
 	).data;
 
 	return parseInt(JSON.stringify(response.dist.unpackedSize));
+}
+
+export async function getDependencies(): Promise<PackageData[]> {
+	const packages = await getObjectAsArray("dependencies");
+
+	const packageObjects: PackageData[] = [];
+	for (let i = 0; i < packages.length; i++) {
+		packageObjects.push({
+			name: packages[i][0],
+			version: packages[i][1].replace("^", ""),
+			size: await getPackageSize(packages[i][0], packages[i][1])
+		});
+	}
+
+	if (packageObjects === undefined) {
+		return [
+			{
+				name: "",
+				version: "",
+				size: 0
+			}
+		];
+	}
+
+	return packageObjects;
+}
+
+export async function getDependenciesWithoutSize(): Promise<Dependency[]> {
+	const packages = await getObjectAsArray("dependencies");
+
+	const packageObjects: Dependency[] = [];
+	for (let i = 0; i < packages.length; i++) {
+		packageObjects.push({
+			name: packages[i][0],
+			version: packages[i][1].replace("^", "")
+		});
+	}
+
+	if (packageObjects === undefined) {
+		return [
+			{
+				name: "",
+				version: ""
+			}
+		];
+	}
+
+	return packageObjects;
 }
