@@ -1,6 +1,7 @@
 {
 	"name": "burden",
 	"displayName": "Unpacked Dependency Burden",
+	"description": "Display the total unpacked size of the dependencies in current nodejs project.",
 	"license": "MIT",
 	"version": "0.0.1",
 	"engines": {
