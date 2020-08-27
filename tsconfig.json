@@ -11,7 +11,10 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUnusedParameters": true,
 		"esModuleInterop": true,
-		"removeComments": true
+		"removeComments": true,
+		"noImplicitThis": true,
+		"noUnusedLocals": true,
+		"noImplicitAny": true
 	},
 	"exclude": ["node_modules", ".vscode-test"]
 }
