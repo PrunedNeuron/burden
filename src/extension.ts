@@ -1,13 +1,8 @@
 import * as vscode from "vscode";
 import prettyBytes from "pretty-bytes";
-import {
-	getDependenciesWithoutSize,
-	getPackageSize
-} from "./helper";
+import { getDependenciesWithoutSize, getPackageSize } from "./helper";
 
 let statusBar: vscode.StatusBarItem;
-
-const emptyPackage = { name: "", version: "", size: 0 };
 
 export async function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "size" is now active!');
@@ -44,17 +39,12 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 export async function update(context: vscode.ExtensionContext) {
-
 	const cachedDependencies: PackageData[] = context.workspaceState.get(
 		"dependencies"
-	) || [emptyPackage];
+	) || [{ name: "", version: "", size: 0 }];
 	const freshDependencies = await getDependenciesWithoutSize();
-	console.log("Cached dependencies: ");
-	console.log(cachedDependencies);
-	console.log("Fresh dependencies: ");
-	console.log(freshDependencies);
 
-	let finalDependencies: PackageData[] = [];
+	let updatedDependencies: PackageData[] = [];
 
 	// add dependencies that were already cached
 	for (let dependency of cachedDependencies) {
@@ -64,7 +54,7 @@ export async function update(context: vscode.ExtensionContext) {
 				pkg.version === dependency.version
 		);
 		if (foundDependency !== undefined) {
-			finalDependencies.push({
+			updatedDependencies.push({
 				...foundDependency,
 				size: dependency.size
 			});
@@ -74,13 +64,13 @@ export async function update(context: vscode.ExtensionContext) {
 	// Add new dependencies, if any
 	for (let dependency of freshDependencies) {
 		if (
-			!finalDependencies.some(
+			!updatedDependencies.some(
 				(pkg) =>
 					pkg.name === dependency.name &&
 					pkg.version === dependency.version
 			)
 		) {
-			finalDependencies.push({
+			updatedDependencies.push({
 				...dependency,
 				size: await getPackageSize(dependency.name, dependency.version)
 			});
@@ -88,10 +78,10 @@ export async function update(context: vscode.ExtensionContext) {
 	}
 
 	// update workspaceState
-	context.workspaceState.update("dependencies", finalDependencies);
+	context.workspaceState.update("dependencies", updatedDependencies);
 	context.workspaceState.update(
 		"dependenciesSize",
-		calculateTotalSize(finalDependencies)
+		calculateTotalSize(updatedDependencies)
 	);
 }
 
