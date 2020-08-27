@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import prettyBytes from "pretty-bytes";
 import {
-	getDependencies,
 	getDependenciesWithoutSize,
 	getPackageSize
 } from "./helper";
@@ -9,7 +8,6 @@ import {
 let statusBar: vscode.StatusBarItem;
 
 const emptyPackage = { name: "", version: "", size: 0 };
-const emptyPackageWithoutSize = { name: "", version: "" };
 
 export async function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "size" is now active!');
@@ -46,11 +44,6 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 export async function update(context: vscode.ExtensionContext) {
-	/* const dependencies = await getDependencies(true);
-	context.workspaceState.update("dependencies", dependencies);
-
-	const totalSize = calculateTotalSize(dependencies);
-	context.workspaceState.update("dependenciesSize", totalSize); */
 
 	const cachedDependencies: PackageData[] = context.workspaceState.get(
 		"dependencies"
@@ -132,7 +125,7 @@ export function updateStatusBar(context: vscode.ExtensionContext) {
 	statusBar.tooltip = `Unpacked size: ${bytes}`;
 }
 
-export function deactivate(context: vscode.ExtensionContext) {
+export function deactivate() {
 	// context.workspaceState.update("dependencies", undefined);
 	// context.workspaceState.update("dependenciesSize", undefined);
 }
