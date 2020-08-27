@@ -1,0 +1,10 @@
+*.js
+node_modules
+*.lock
+*.json
+*.yml
+*.md
+*.eslintrc
+*.prettierrc
+*.gitignore
+*.vscodeignore
