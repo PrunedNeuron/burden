@@ -79,8 +79,6 @@ export function updateStatusBar(context: vscode.ExtensionContext): void {
 export async function activate(
 	context: vscode.ExtensionContext
 ): Promise<void> {
-	console.log('Congratulations, your extension "size" is now active!');
-
 	const activeEditor: vscode.TextEditor | undefined =
 		vscode.window.activeTextEditor;
 
@@ -98,11 +96,6 @@ export async function activate(
 			) {
 				await update(context);
 				updateStatusBar(context);
-				console.log(
-					prettyBytes(
-						context.workspaceState.get("dependenciesSize") || 0
-					)
-				);
 			}
 		},
 		null,
