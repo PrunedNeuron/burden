@@ -1,0 +1,23 @@
+version: 2.1
+jobs:
+    linux:
+        working_directory: ~/repo
+        docker:
+            - image: circleci/node:latest
+        steps:
+            - checkout
+            - restore_cache:
+                  keys:
+                      - v1-linux-dependencies-{{ checksum "package.json" }}
+                      - v1-linux-dependencies-
+            - run: yarn
+            - save_cache:
+                  paths:
+                      - node_modules
+                  key: v1-linux-dependencies-{{ checksum "package.json" }}
+            - run: yarn pretest && yarn test
+workflows:
+    version: 2
+    build:
+        jobs:
+            - linux
