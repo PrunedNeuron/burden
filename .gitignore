@@ -48,3 +48,9 @@ yarn.lock
 # pm2
 ecosystem.config.js
 ecosystem.yml
+
+# vscode api
+*.lock
+/out/
+/node_modules/
+/.vscode/
