@@ -1,0 +1,29 @@
+{
+	"root": true,
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": 6,
+		"sourceType": "module"
+	},
+	"plugins": ["@typescript-eslint", "no-secrets", "simple-import-sort"],
+	"extends": [
+		"plugin:@typescript-eslint/recommended",
+		"plugin:prettier/recommended",
+		"plugin:no-unsanitized/DOM",
+		"prettier/@typescript-eslint",
+		"prettier"
+	],
+	"rules": {
+		"no-secrets/no-secrets": "error",
+		"no-unsanitized/method": "error",
+		"no-unsanitized/property": "error",
+		"simple-import-sort/sort": "error",
+		"@typescript-eslint/semi": "warn",
+		"curly": "warn",
+		"eqeqeq": "warn",
+		"no-throw-literal": "warn",
+		"semi": "off",
+		"sort-imports": "off",
+		"import/order": "off"
+	}
+}
