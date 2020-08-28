@@ -1,14 +1,15 @@
 {
 	"name": "burden",
-	"displayName": "Unpacked Dependency Burden",
+	"displayName": "Dependency Burden",
 	"author": {
 		"name": "ayush",
 		"email": "am@ayushm.dev",
 		"url": "https://ayushm.dev"
 	},
-	"description": "Display the total unpacked size of the dependencies in current nodejs project.",
+	"publisher": "prunedneuron",
+	"description": "Displays the total unpacked size of the dependencies in the current nodejs project.",
 	"license": "MIT",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/PrunedNeuron/burden.git"
@@ -20,13 +21,24 @@
 	"categories": [
 		"Other"
 	],
+	"tags": [
+		"burden",
+		"weight",
+		"dependencies",
+		"package",
+		"import",
+		"cost"
+	],
 	"activationEvents": [
 		"workspaceContains:**/package.json"
 	],
-	"main": "./out/extension.js",
+	"main": "./dist/extension",
 	"scripts": {
-		"vscode:prepublish": "yarn run compile",
+		"vscode:prepublish": "webpack --mode production",
+		"webpack": "webpack --mode development",
+		"webpack-dev": "webpack --mode development --watch",
 		"compile": "tsc -p ./",
+		"test-compile": "tsc -p ./",
 		"lint": "eslint src --ext ts",
 		"watch": "tsc -watch -p ./",
 		"pretest": "yarn run compile && yarn run lint",
@@ -42,14 +54,17 @@
 		"eslint": "^7.7.0",
 		"eslint-config-prettier": "^6.11.0",
 		"eslint-plugin-no-secrets": "^0.6.8",
-		"eslint-plugin-no-unsanitized": "^3.1.2",
 		"eslint-plugin-prettier": "^3.1.4",
 		"eslint-plugin-simple-import-sort": "^5.0.3",
 		"glob": "^7.1.6",
 		"mocha": "^8.1.2",
 		"prettier": "^2.1.1",
+		"terser-webpack-plugin": "^4.1.0",
+		"ts-loader": "^8.0.3",
 		"typescript": "^4.0.2",
-		"vscode-test": "^1.4.0"
+		"vscode-test": "^1.4.0",
+		"webpack": "^4.44.1",
+		"webpack-cli": "^3.3.12"
 	},
 	"dependencies": {
 		"axios": "^0.20.0",
