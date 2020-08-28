@@ -1,9 +1,9 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
-		"target": "es6",
+		"target": "es2017",
 		"outDir": "out",
-		"lib": ["es6", "DOM"],
+		"lib": ["es6", "esnext", "DOM"],
 		"sourceMap": true,
 		"rootDir": "src",
 		"strict": true,
@@ -14,7 +14,8 @@
 		"removeComments": true,
 		"noImplicitThis": true,
 		"noUnusedLocals": true,
-		"noImplicitAny": true
+		"noImplicitAny": true,
+		"pretty": true
 	},
 	"exclude": ["node_modules", ".vscode-test"]
 }
