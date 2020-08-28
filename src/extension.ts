@@ -65,6 +65,7 @@ export async function update(context: vscode.ExtensionContext): Promise<void> {
 		"dependencies"
 	) || [{ name: "", version: "", size: 0 }];
 
+	statusBarItem.update(`$(sync~spin)`);
 	const freshDependencies = await getDependenciesWithoutSize();
 
 	const updatedDependencies: PackageData[] = await getCurrentDependencies(
@@ -78,6 +79,9 @@ export async function update(context: vscode.ExtensionContext): Promise<void> {
 		"dependenciesSize",
 		calculateTotalSize(updatedDependencies)
 	);
+
+	statusBarItem.update(context.workspaceState.get("dependenciesSize") || 0);
+	context.workspaceState.update("isLoading", false);
 }
 
 export async function activate(
@@ -87,7 +91,7 @@ export async function activate(
 		vscode.window.activeTextEditor;
 
 	await update(context);
-	statusBarItem.update(context);
+	statusBarItem.update(context.workspaceState.get("dependenciesSize") || 0);
 
 	context.subscriptions.push(statusBarItem.get());
 
@@ -95,14 +99,16 @@ export async function activate(
 		async (document) => {
 			if (isPackageJson(document, activeEditor)) {
 				await update(context);
-				statusBarItem.update(context);
+				statusBarItem.update(
+					context.workspaceState.get("dependenciesSize") || 0
+				);
 			}
 		},
 		undefined,
 		context.subscriptions
 	);
 
-	statusBarItem.update(context);
+	statusBarItem.update(context.workspaceState.get("dependenciesSize") || 0);
 }
 
 export function deactivate(): void {
