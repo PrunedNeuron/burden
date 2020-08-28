@@ -1,6 +1,7 @@
 # Burden
 
-
+[![Maintainability](https://api.codeclimate.com/v1/badges/c7cd3c0c62a75d4f6451/maintainability)](https://codeclimate.com/github/PrunedNeuron/burden/maintainability)
+[![Build Status](https://dev.azure.com/prunedneuron/Burden/_apis/build/status/PrunedNeuron.burden?branchName=master)](https://dev.azure.com/prunedneuron/Burden/_build/latest?definitionId=1&branchName=master)
 
 ## Table of Contents
 
