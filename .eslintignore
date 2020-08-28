@@ -8,3 +8,4 @@ node_modules
 *.prettierrc
 *.gitignore
 *.vscodeignore
+**/test/**/*
