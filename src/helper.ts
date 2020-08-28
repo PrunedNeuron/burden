@@ -40,7 +40,10 @@ export async function getPackageJson(): Promise<Uint8Array> {
 }
 
 export async function getObjectAsArray(name: string): Promise<any[][]> {
-	const packageJson = JSON.parse((await getPackageJson()).toString());
+	let fileContents = (await getPackageJson()).toString();
+	// "/^s*$(?:\r\n?|\n)/gm"
+	fileContents = fileContents.replace(/,\s*$/, "");
+	const packageJson = JSON.parse(fileContents);
 	if (packageJson) {
 		if (Object.keys(packageJson).includes(name)) {
 			const object = packageJson[name];
