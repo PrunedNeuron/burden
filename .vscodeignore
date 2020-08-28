@@ -8,7 +8,6 @@ src/**
 **/*.map
 **/*.ts
 **/*.yml
-**/*.md
 **/.eslintrc
 **/.eslintignore
 **/.prettierrc
