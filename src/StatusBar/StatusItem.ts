@@ -15,12 +15,14 @@ export default class StatusItem {
 		return this.statusBarItem;
 	}
 
-	update(context: vscode.ExtensionContext): void {
+	update(text: number | string): void {
 		this.statusBarItem.show();
-		const bytes = prettyBytes(
-			context.workspaceState.get("dependenciesSize") || 0
-		);
-		this.statusBarItem.text = `$(package) ${bytes}`;
-		this.statusBarItem.tooltip = `Unpacked size: ${bytes}`;
+		if (typeof text === "number") {
+			this.statusBarItem.text = `$(package) ${prettyBytes(text)}`;
+			this.statusBarItem.tooltip = `Unpacked size: ${prettyBytes(text)}`;
+		} else {
+			this.statusBarItem.text = `${text}`;
+			this.statusBarItem.tooltip = `Loading...`;
+		}
 	}
 }
