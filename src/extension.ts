@@ -1,33 +1,37 @@
-import prettyBytes from "pretty-bytes";
 import vscode from "vscode";
 
-import { getDependenciesWithoutSize, getPackageSize } from "./helper";
+import {
+	calculateTotalSize,
+	getDependenciesWithoutSize,
+	getPackageSize
+} from "./helper";
+import StatusItem from "./StatusBar/StatusItem";
 
-let statusBar: vscode.StatusBarItem;
+const statusBarItem = new StatusItem();
 
-export function calculateTotalSize(
-	packageData: PackageData[] | undefined
-): number {
-	if (packageData !== undefined) {
-		return packageData.reduce((a, b) => a + b.size, 0);
-	}
-	return 0;
+export function isPackageJson(
+	document: vscode.TextDocument,
+	editor: vscode.TextEditor | undefined
+): boolean | undefined {
+	return (
+		editor &&
+		document === editor.document &&
+		document.fileName.includes("package.json")
+	);
 }
 
-export async function update(context: vscode.ExtensionContext): Promise<void> {
-	const cachedDependencies: PackageData[] = context.workspaceState.get(
-		"dependencies"
-	) || [{ name: "", version: "", size: 0 }];
-	const freshDependencies = await getDependenciesWithoutSize();
-
+export async function getCurrentDependencies(
+	cache: PackageData[],
+	fresh: Dependency[]
+): Promise<PackageData[]> {
 	const updatedDependencies: PackageData[] = [];
 
 	// add dependencies that were already cached
-	for (const dependency of cachedDependencies) {
-		const foundDependency = freshDependencies.find(
-			(pkg) =>
-				pkg.name === dependency.name &&
-				pkg.version === dependency.version
+	for (const dependency of cache) {
+		const foundDependency = fresh.find(
+			(package_) =>
+				package_.name === dependency.name &&
+				package_.version === dependency.version
 		);
 		if (foundDependency !== undefined) {
 			updatedDependencies.push({
@@ -38,12 +42,12 @@ export async function update(context: vscode.ExtensionContext): Promise<void> {
 	}
 
 	// Add new dependencies, if any
-	for (const dependency of freshDependencies) {
+	for (const dependency of fresh) {
 		if (
 			!updatedDependencies.some(
-				(pkg) =>
-					pkg.name === dependency.name &&
-					pkg.version === dependency.version
+				(package_) =>
+					package_.name === dependency.name &&
+					package_.version === dependency.version
 			)
 		) {
 			updatedDependencies.push({
@@ -53,27 +57,27 @@ export async function update(context: vscode.ExtensionContext): Promise<void> {
 		}
 	}
 
+	return updatedDependencies;
+}
+
+export async function update(context: vscode.ExtensionContext): Promise<void> {
+	const cachedDependencies: PackageData[] = context.workspaceState.get(
+		"dependencies"
+	) || [{ name: "", version: "", size: 0 }];
+
+	const freshDependencies = await getDependenciesWithoutSize();
+
+	const updatedDependencies: PackageData[] = await getCurrentDependencies(
+		cachedDependencies,
+		freshDependencies
+	);
+
 	// update workspaceState
 	context.workspaceState.update("dependencies", updatedDependencies);
 	context.workspaceState.update(
 		"dependenciesSize",
 		calculateTotalSize(updatedDependencies)
 	);
-}
-
-export function updateStatusBar(context: vscode.ExtensionContext): void {
-	if (!statusBar) {
-		statusBar = vscode.window.createStatusBarItem(
-			vscode.StatusBarAlignment.Left
-		);
-		statusBar.show();
-	}
-	statusBar.show();
-	const bytes = prettyBytes(
-		context.workspaceState.get("dependenciesSize") || 0
-	);
-	statusBar.text = `$(package) ${bytes}`;
-	statusBar.tooltip = `Unpacked size: ${bytes}`;
 }
 
 export async function activate(
@@ -83,26 +87,22 @@ export async function activate(
 		vscode.window.activeTextEditor;
 
 	await update(context);
-	updateStatusBar(context);
+	statusBarItem.update(context);
 
-	context.subscriptions.push(statusBar);
+	context.subscriptions.push(statusBarItem.get());
 
 	vscode.workspace.onDidSaveTextDocument(
 		async (document) => {
-			if (
-				activeEditor &&
-				document === activeEditor.document &&
-				document.fileName.includes("package.json")
-			) {
+			if (isPackageJson(document, activeEditor)) {
 				await update(context);
-				updateStatusBar(context);
+				statusBarItem.update(context);
 			}
 		},
-		null,
+		undefined,
 		context.subscriptions
 	);
 
-	updateStatusBar(context);
+	statusBarItem.update(context);
 }
 
 export function deactivate(): void {
