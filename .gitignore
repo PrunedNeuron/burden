@@ -54,3 +54,9 @@ ecosystem.yml
 /out/
 /node_modules/
 /.vscode/
+
+#webpack
+dist
+/dist/
+build
+/build/
