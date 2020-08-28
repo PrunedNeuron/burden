@@ -1,7 +1,9 @@
 # Burden
+[![Build Status][pipelines]][pipelines-url]
+[![Maintainability][code-climate]][code-climate-url]
+![Technical debt][technical-debt]
+![Snyk Vulnerabilities for GitHub Repo][snyk]
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/c7cd3c0c62a75d4f6451/maintainability)](https://codeclimate.com/github/PrunedNeuron/burden/maintainability)
-[![Build Status](https://dev.azure.com/prunedneuron/Burden/_apis/build/status/PrunedNeuron.burden?branchName=master)](https://dev.azure.com/prunedneuron/Burden/_build/latest?definitionId=1&branchName=master)
 
 ## Table of Contents
 
@@ -70,6 +72,15 @@ See <a href="LICENSE.md">`LICENSE`</a> for more information.
 
 ## Contact
 
-:email: - [am@ayushm.dev](mailto:am@ayushm.dev)<br>
-:basketball: - [Dribbble](https://dribbble.com/ayush)<br>
-:globe_with_meridians: - [Website](https://ayushm.dev)
+Email - [am@ayushm.dev](mailto:am@ayushm.dev)<br>
+Dribbble - [Dribbble](https://dribbble.com/ayush)<br>
+Website - [Website](https://ayushm.dev)
+
+
+<!-- Links -->
+[pipelines]: https://dev.azure.com/prunedneuron/Burden/_apis/build/status/PrunedNeuron.burden?branchName=master
+[pipelines-url]: https://dev.azure.com/prunedneuron/Burden/_build/latest?definitionId=1&branchName=master
+[code-climate]: https://img.shields.io/codeclimate/maintainability/PrunedNeuron/burden
+[code-climate-url]: https://codeclimate.com/github/PrunedNeuron/burden/maintainability
+[snyk]: https://img.shields.io/snyk/vulnerabilities/github/PrunedNeuron/burden
+[technical-debt]: https://img.shields.io/codeclimate/tech-debt/PrunedNeuron/burden
