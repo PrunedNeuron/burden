@@ -41,7 +41,3 @@ steps:
       displayName: Run Tests
       env:
           DISPLAY: ":99.0"
-
-    - script: |
-          bash <(curl -s https://codecov.io/bash)
-      displayName: Upload to codecov.io
