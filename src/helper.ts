@@ -16,32 +16,31 @@ export async function readFile(path: string): Promise<Uint8Array | undefined> {
 	let contents;
 	try {
 		contents = await workspace.fs.readFile(Uri.file(path));
-	} catch (error) {
+	} catch {
 		console.error("Error reading file.");
 	}
 
 	return contents;
 }
 
-export async function getPackageJson(): Promise<any> {
+export async function getPackageJson(): Promise<Uint8Array> {
 	if (packageJsonExists()) {
-		const contents = await readFile(`${workspace.rootPath}/package.json`);
+		const contents: Uint8Array =
+			(await readFile(`${workspace.rootPath}/package.json`)) ||
+			new Uint8Array();
 
-		if (!contents) {
-			console.error("package.json does not exist.");
-			return;
-		}
-		if (contents.length <= 0) {
-			console.error("Empty package.json!");
-			return;
+		if (!contents.length) {
+			console.error("package.json is empty.");
 		}
 
-		return JSON.parse(contents.toString());
+		return contents;
 	}
+
+	return new Uint8Array();
 }
 
 export async function getObjectAsArray(name: string): Promise<any[][]> {
-	const packageJson = await getPackageJson();
+	const packageJson = JSON.parse((await getPackageJson()).toString());
 	if (packageJson) {
 		if (Object.keys(packageJson).includes(name)) {
 			const object = packageJson[name];
@@ -65,18 +64,18 @@ export async function getPackageSize(
 		})
 	).data;
 
-	return parseInt(JSON.stringify(response.dist.unpackedSize));
+	return Number.parseInt(JSON.stringify(response.dist.unpackedSize));
 }
 
 export async function getDependencies(): Promise<PackageData[]> {
 	const packages = await getObjectAsArray("dependencies");
 
 	const packageObjects: PackageData[] = [];
-	for (let i = 0; i < packages.length; i++) {
+	for (const package_ of packages) {
 		packageObjects.push({
-			name: packages[i][0],
-			version: packages[i][1].replace("^", ""),
-			size: await getPackageSize(packages[i][0], packages[i][1])
+			name: package_[0],
+			version: package_[1].replace("^", ""),
+			size: await getPackageSize(package_[0], package_[1])
 		});
 	}
 
@@ -97,10 +96,10 @@ export async function getDependenciesWithoutSize(): Promise<Dependency[]> {
 	const packages = await getObjectAsArray("dependencies");
 
 	const packageObjects: Dependency[] = [];
-	for (let i = 0; i < packages.length; i++) {
+	for (const package_ of packages) {
 		packageObjects.push({
-			name: packages[i][0],
-			version: packages[i][1].replace("^", "")
+			name: package_[0],
+			version: package_[1].replace("^", "")
 		});
 	}
 
@@ -114,4 +113,13 @@ export async function getDependenciesWithoutSize(): Promise<Dependency[]> {
 	}
 
 	return packageObjects;
+}
+
+export function calculateTotalSize(
+	packageData: PackageData[] | undefined
+): number {
+	if (packageData !== undefined) {
+		return packageData.reduce((a, b) => a + b.size, 0);
+	}
+	return 0;
 }
