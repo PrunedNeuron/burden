@@ -60,3 +60,5 @@ dist
 /dist/
 build
 /build/
+release
+/release/
