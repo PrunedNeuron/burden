@@ -24,7 +24,7 @@ export async function readFile(path: string): Promise<Uint8Array | undefined> {
 }
 
 export async function getPackageJson(): Promise<Uint8Array> {
-	if (packageJsonExists()) {
+	if (await packageJsonExists()) {
 		const contents: Uint8Array =
 			(await readFile(`${workspace.rootPath}/package.json`)) ||
 			new Uint8Array();
@@ -39,6 +39,7 @@ export async function getPackageJson(): Promise<Uint8Array> {
 	return new Uint8Array();
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getObjectAsArray(name: string): Promise<any[][]> {
 	let fileContents = (await getPackageJson()).toString();
 	// "/^s*$(?:\r\n?|\n)/gm"
@@ -82,7 +83,7 @@ export async function getDependencies(): Promise<PackageData[]> {
 		});
 	}
 
-	if (packageObjects === undefined) {
+	if (packageObjects.length <= 0) {
 		return [
 			{
 				name: "",
@@ -106,7 +107,7 @@ export async function getDependenciesWithoutSize(): Promise<Dependency[]> {
 		});
 	}
 
-	if (packageObjects === undefined) {
+	if (packageObjects.length <= 0) {
 		return [
 			{
 				name: "",
