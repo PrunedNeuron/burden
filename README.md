@@ -2,7 +2,19 @@
 [![Build Status][pipelines]][pipelines-url]
 [![Maintainability][code-climate]][code-climate-url]
 ![Technical debt][technical-debt]
-![Snyk Vulnerabilities for GitHub Repo][snyk]
+![Snyk Vulnerabilities][snyk]
+
+
+<!-- PROJECT LOGO -->
+<br />
+<p align="center">
+  <a href="">
+    <img src="assets/img/burden_logo.png" alt="Logo" width="80" height="80">
+  </a>
+
+  <h3 align="center">Dependency Burden</h3>
+</p>
+
 
 
 ## Table of Contents
