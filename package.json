@@ -14,7 +14,7 @@
 		"type": "git",
 		"url": "https://github.com/PrunedNeuron/burden.git"
 	},
-	"icon": "",
+	"icon": "assets/img/burden_logo.png",
 	"engines": {
 		"vscode": "^1.48.0"
 	},
